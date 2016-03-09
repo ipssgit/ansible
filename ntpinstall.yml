@@ -1,9 +1,9 @@
 ---
 - name: install and start ntp
-  hosts: hosts_usa
+  hosts: "{{ hostgroup }}"
   remote_user: "{{ uservar }}"
-  sudo: true
-  sudo_user: root
+  become: true
+  become_user: root
   
   tasks:
   - name: install ntp
