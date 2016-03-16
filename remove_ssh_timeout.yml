@@ -1,0 +1,29 @@
+---
+- name: change ssh timeout settings
+  hosts: "{{ hostgroup }}"
+  remote_user: "{{ uservar }}"
+  become: true
+  become_user: root
+
+  tasks:
+  - name: replacing commented TCPKeepAlive
+    lineinfile: dest=/etc/ssh/sshd_config backup=yes regexp=^#TCPKeepAlive line="TCPKeepAlive yes" state=present
+
+  - name: replacing existing TCPKeepAlive
+    lineinfile: dest=/etc/ssh/sshd_config backup=yes regexp="^TCPKeepAlive" line="TCPKeepAlive yes" state=present
+
+  - name: replacing commented ClientAliveInterval
+    lineinfile: dest=/etc/ssh/sshd_config backup=yes regexp="^#ClientAliveInterval" line="ClientAliveInterval 30" state=present
+
+  - name: replacing existing ClientAliveInterval
+    lineinfile: dest=/etc/ssh/sshd_config backup=yes regexp="^ClientAliveInterval" line="ClientAliveInterval 30" state=present
+
+  - name: replacing commented ClientAliveCountMax
+    lineinfile: dest=/etc/ssh/sshd_config backup=yes regexp="^#ClientAliveCountMax" line="ClientAliveCountMax 99999" state=presen         t
+
+  - name: replacing existing ClientAliveCountMax
+    lineinfile: dest=/etc/ssh/sshd_config backup=yes regexp="^ClientAliveCountMax" line="ClientAliveCountMax 99999" state=present
+
+  - name: restart sshd
+    service: name=sshd state=restarted
+...
