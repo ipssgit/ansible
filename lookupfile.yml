@@ -1,0 +1,12 @@
+---
+- hosts: all
+  vars_files:
+    - /opt/ansible-core/ansible/demo/roles/common/vars/main.yml
+  vars:
+     target: "{{ file }}"
+     contents: "{{ lookup('file', '{{ target}}') }}"
+
+  tasks:
+
+     - debug: msg="the value of {{ target }} is {{ contents }}"
+...
