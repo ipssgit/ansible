@@ -1,0 +1,35 @@
+---
+- name: create user and set password
+  #hosts: "{{ hostgroup }}"
+  hosts: 172.20.40.11
+  remote_user: "{{ uservar }}"
+  become: true
+  become_user: root
+  vars_files:
+    - /opt/ansible-core/ansible/demo/roles/common/vars/main.yml
+
+  tasks:
+    - name: look for user group
+      command: >-
+         awk -F: '$1=="commsadm" || $1=="sysadmin" || $1=="dba" || $1=="wheel" {print $1}' /etc/group
+         with_items:
+           - commsadm
+           - sysadmin
+           - dba
+           - wheel
+#      shell: grep 'commsadm\|sysadmin' /etc/group | cut -d':' -f1
+      register: shell_output
+      ignore_errors: true
+
+    - debug: var=shell_output
+
+    - debug: var=uservar
+
+    - name: Create user
+      user: name={{ username }} shell=/bin/bash home=/home/admin/{{ username }} groups={{ shell_output.stdout }},dba,sysadmin generate_ssh_key=yes ssh_key_bits=2048
+      ignore_errors: true
+
+    - name: Set password to user
+      shell: >-
+        echo user:ipssadmin1 | sudo chpasswd
+...
